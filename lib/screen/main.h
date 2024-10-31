@@ -1,6 +1,7 @@
-#include <M5GFX.h>
 #ifndef __SCREEN_MAIN_H__
 #define __SCREEN_MAIN_H__
+#include <M5GFX.h>
+#include <FS.h>
 
 // いまの状態
 // Nobalだと緑
@@ -32,5 +33,5 @@ enum MainSelection
 // main画面を描画するやつ
 // 何回でも呼んで大丈夫
 // 選択が変わったらもっかい呼ぶ
-void drawMainScreen(M5GFX *display, MainState state, MainSelection selection);
+void drawMainScreen(fs::FS &fs, M5GFX *display, MainState state, MainSelection selection);
 #endif
