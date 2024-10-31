@@ -24,6 +24,7 @@ enum SettingSelection
     Scan,
     AlertTime,
     UserClock,
+    Back,
 };
 
 // SettingStateの初期化関数
