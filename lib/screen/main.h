@@ -1,5 +1,6 @@
 #ifndef __SCREEN_MAIN_H__
 #define __SCREEN_MAIN_H__
+#include <SPIFFS.h>
 #include <M5GFX.h>
 #include <FS.h>
 
