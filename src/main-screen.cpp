@@ -9,7 +9,7 @@ namespace main_screen
     MainSelection selections[selectionsMax + 1] = {MainSelection::Bell, MainSelection::Setting, MainSelection::Add};
 }
 
-ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class button, bool isScan, std::vector<uint16_t> *registeredIds)
+ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class button, bool isScan, bool isFirst, std::vector<uint16_t> *registeredIds)
 {
     using namespace main_screen;
 
@@ -59,6 +59,14 @@ ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Butto
     }
 
     selectionIndex = updaterIndex(selectionIndex, selectionsMax, encoder->difference());
+    if (!isFirst && encoder->difference() == 0)
+    {
+        return nextScreenState;
+    }
+    if (isFirst)
+    {
+        selectionIndex = 0;
+    }
     drawMainScreen(SPIFFS, display, state, selections[selectionIndex]);
     return nextScreenState;
 }
