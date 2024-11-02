@@ -16,6 +16,11 @@ int Encoder::difference()
 
 void Encoder::update()
 {
+    auto value = this->encoder->read();
+    if (abs(this->lastValue - value) < 4)
+    {
+        return;
+    }
     this->lastValue = this->value;
     this->value = this->encoder->read();
 }
