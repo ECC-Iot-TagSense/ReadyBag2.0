@@ -12,7 +12,7 @@
 // auto {変数名} = MainState::Nomal;
 // ↑こんなんじでいける
 // {関数}(MainState::Nomal) ←こんなんでもいい
-enum MainState
+enum class MainState
 {
     Nomal,
     Alert,
@@ -24,7 +24,7 @@ enum MainState
 // auto {変数名} = MainSelection::Add;
 // ↑こんなんじでいける
 // {関数}(MainSelection::Add) ←こんなんでもいい
-enum MainSelection
+enum class MainSelection
 {
     Add,
     Bell,
