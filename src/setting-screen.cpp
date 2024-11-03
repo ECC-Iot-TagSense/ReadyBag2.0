@@ -6,7 +6,7 @@ namespace setting_screen
 {
     int selectionIndex = 0;
     const int selectionsMax = 4;
-    SettingSelection selections[selectionsMax + 1] = {SettingSelection::Back, SettingSelection::Light, SettingSelection::Scan, SettingSelection::AlertTime, SettingSelection::UserClock};
+    SettingSelection selections[selectionsMax + 1] = {SettingSelection::Back, SettingSelection::AlertTime, SettingSelection::UserClock, SettingSelection::Scan, SettingSelection::Light};
 }
 
 ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *button, SettingState *setistate, bool isFirst)
