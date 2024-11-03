@@ -6,8 +6,11 @@
 #include "setting-screen.h"
 #include "main-screen.h"
 #include "reader.h"
+#include "save-settings.h"
 
 using std::vector;
+
+const char *settingBasePath = "/settings";
 
 Encoder *encoder;
 vector<uint16_t> ids;
@@ -24,7 +27,7 @@ void setup()
   SPIFFS.begin(true);
   encoder = new Encoder(&M5Dial.Encoder);
   USBSerial.println("Start");
-  settingState = initSettingState(true, true, true, true);
+  settingState = readSetting(SPIFFS, settingBasePath);
   reader = new Reader(&Serial);
 }
 
@@ -57,6 +60,10 @@ void loop()
 
   default:
     break;
+  }
+  if (currentState == ScreenState::Setting && nextState == ScreenState::Main)
+  {
+    saveSetting(SPIFFS, settingBasePath, settingState);
   }
   isFirst = nextState != currentState;
   currentState = nextState;
