@@ -2,7 +2,6 @@
 
 void setup()
 {
-    
 }
 
 void loop()
