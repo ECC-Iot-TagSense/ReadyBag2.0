@@ -13,7 +13,9 @@ ScreenState settingLoop(M5GFX *display,  Encoder *encoder, m5::Button_Class *but
 {
     using namespace setting_screen;
 
-    if (button.wasPressed())
+    ScreenState nextScreenState = ScreenState::Setting;  // 初期状態を設定
+
+    if (button->wasPressed())
     {
         auto currentSelection = selections[selectionIndex];
         switch (currentSelection)
@@ -43,6 +45,6 @@ ScreenState settingLoop(M5GFX *display,  Encoder *encoder, m5::Button_Class *but
     }
 
     selectionIndex = updaterIndex(selectionIndex, selectionsMax, encoder->difference());    //選択肢の変更
-    drawSettingScreen(SPIFFS, display, state, selections[selectionIndex]);  //画面描画
+    drawSettingScreen(SPIFFS, display, *setistate, selections[selectionIndex]);  //画面描画
     return nextScreenState; //次の画面を返す
 }
