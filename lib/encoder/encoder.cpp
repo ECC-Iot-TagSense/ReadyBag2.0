@@ -17,10 +17,10 @@ int Encoder::difference()
 void Encoder::update()
 {
     auto value = this->encoder->read();
-    if (abs(this->lastValue - value) < 4)
+    if (abs(this->lastValue * 4 - value) < 4 && this->value == this->lastValue)
     {
         return;
     }
     this->lastValue = this->value;
-    this->value = this->encoder->read();
+    this->value = value / 4;
 }
