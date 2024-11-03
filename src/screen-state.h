@@ -7,3 +7,5 @@ enum class ScreenState
     Add,
 };
 #endif
+
+//画面状態
