@@ -4,19 +4,13 @@
 #include <M5GFX.h>
 #include <FS.h>
 
-// 画像IDを定義
-enum ImageID {
-    ADD,
-    BELL,
-    SETTING,
-    STATUS_ALERT,
-    STATUS_NORMAL,
-    STATUS_SCAN_OFF
+// 設定の状態判定用の変数
+struct SettingState
+{
+    bool light;
+    bool scan;
+    bool alert_time;
+    bool user_clock;
 };
-
-// 関数のプロトタイプ
-void displayImageFromDataFolder(ImageID imageId);
-void updateImageBasedOnRotation(int rotationRate);
-void initializeSDCard();
 
 #endif // IMAGE_DISPLAY_H
