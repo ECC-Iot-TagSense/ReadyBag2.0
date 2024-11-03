@@ -19,7 +19,7 @@ struct SettingState
 // SettingSelection::Light などで指定
 // auto {変数名} = SettingSelection::Light;
 // ↑こんなんじでいける
-enum SettingSelection
+enum class SettingSelection
 {
     Light,
     Scan,

@@ -6,10 +6,10 @@
 class Reader
 {
 private:
-    HardwareSerial serial;
+    HardwareSerial *serial;
 
 public:
-    Reader(HardwareSerial serial);
+    Reader(HardwareSerial *serial);
     ~Reader();
 
     void start();                 // 読み取り開始
