@@ -8,6 +8,6 @@
 #include "screen.h"                 // タイトル画面のメインループ処理を行う関数のプロトタイプ
 
 // 設定画面のメインループ処理を行う関数のプロトタイプ
-ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *button, SettingState *settingState);
+ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *button, SettingState *setistate, bool isFirst);
 
 #endif

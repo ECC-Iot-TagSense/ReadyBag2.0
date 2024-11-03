@@ -9,13 +9,14 @@ namespace setting_screen
     SettingSelection selections[selectionsMax + 1] = {SettingSelection::Back, SettingSelection::Light, SettingSelection::Scan, SettingSelection::AlertTime, SettingSelection::UserClock};
 }
 
-ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *button, SettingState *setistate)
+ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *button, SettingState *setistate, bool isFirst)
 {
     using namespace setting_screen;
 
     ScreenState nextScreenState = ScreenState::Setting; // 初期状態を設定
+    auto wasPressed = button->wasPressed();
 
-    if (button->wasPressed())
+    if (wasPressed)
     {
         auto currentSelection = selections[selectionIndex];
         switch (currentSelection)
@@ -44,7 +45,15 @@ ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *butt
         }
     }
 
+    if (!isFirst && encoder->difference() == 0 && !wasPressed)
+    {
+        return nextScreenState;
+    }
     selectionIndex = updaterIndex(selectionIndex, selectionsMax, encoder->difference()); // 選択肢の変更
-    drawSettingScreen(SPIFFS, display, *setistate, selections[selectionIndex]);          // 画面描画
-    return nextScreenState;                                                              // 次の画面を返す
+    if (isFirst)
+    {
+        selectionIndex = 0;
+    }
+    drawSettingScreen(SPIFFS, display, *setistate, selections[selectionIndex]); // 画面描画
+    return nextScreenState;                                                     // 次の画面を返す
 }
