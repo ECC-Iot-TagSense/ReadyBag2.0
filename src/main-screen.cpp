@@ -9,7 +9,7 @@ namespace main_screen
     MainSelection selections[selectionsMax + 1] = {MainSelection::Bell, MainSelection::Setting, MainSelection::Add};
 }
 
-ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class button, bool isScan, bool isFirst, std::vector<uint16_t> *registeredIds)
+ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<uint16_t> *registeredIds)
 {
     using namespace main_screen;
 
@@ -39,7 +39,7 @@ ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Butto
         }
     }
 
-    if (button.wasPressed())
+    if (button->wasPressed())
     {
         auto currentSelection = selections[selectionIndex];
         switch (currentSelection)
