@@ -1,0 +1,6 @@
+{
+    "light": true,
+    "scan": true,
+    "alertTime": false,
+    "userClock": true
+}
