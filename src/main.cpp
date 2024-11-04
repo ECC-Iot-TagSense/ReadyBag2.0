@@ -1,6 +1,6 @@
 #include <SPIFFS.h>
 #include <Arduino.h>
-#include <M5dial.h>
+#include <M5Dial.h>
 #include "encoder.h"
 #include <vector>
 #include "setting-screen.h"
