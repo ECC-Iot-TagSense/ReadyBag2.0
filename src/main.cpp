@@ -1,6 +1,6 @@
 #include <SPIFFS.h>
 #include <Arduino.h>
-#include <M5dial.h>
+#include <M5Dial.h>
 #include "encoder.h"
 #include <vector>
 #include "setting-screen.h"
@@ -21,50 +21,50 @@ ScreenState currentState = ScreenState::Main;
 
 void setup()
 {
-  USBSerial.begin(115200);
-  Serial.begin(115200);
-  M5Dial.begin(true);
-  SPIFFS.begin(true);
-  encoder = new Encoder(&M5Dial.Encoder);
-  USBSerial.println("Start");
-  settingState = readSetting(SPIFFS, settingBasePath);
-  reader = new Reader(&Serial);
+    USBSerial.begin(115200);
+    Serial.begin(115200);
+    M5Dial.begin(true);
+    SPIFFS.begin(true);
+    encoder = new Encoder(&M5Dial.Encoder);
+    USBSerial.println("Start");
+    settingState = readSetting(SPIFFS, settingBasePath);
+    reader = new Reader(&Serial);
 }
 
 void loop()
 {
-  M5Dial.update();
-  encoder->update();
-  auto nextState = currentState;
-  switch (currentState)
-  {
-  case ScreenState::Main:
-    nextState = mainLoop(&M5Dial.Display, reader, encoder, &M5Dial.BtnA, settingState.scan, isFirst, &ids);
-    break;
-
-  case ScreenState::Setting:
-    nextState = settingLoop(&M5Dial.Display, encoder, &M5Dial.BtnA, &settingState, isFirst);
-    break;
-
-  case ScreenState::Add:
-    if (ids.size() > 1)
+    M5Dial.update();
+    encoder->update();
+    auto nextState = currentState;
+    switch (currentState)
     {
-      ids.clear();
-    }
-    else
-    {
-      ids.push_back(0x1234);
-    }
-    nextState = ScreenState::Main;
-    break;
+    case ScreenState::Main:
+        nextState = mainLoop(&M5Dial.Display, reader, encoder, &M5Dial.BtnA, settingState.scan, isFirst, &ids);
+        break;
 
-  default:
-    break;
-  }
-  if (currentState == ScreenState::Setting && nextState == ScreenState::Main)
-  {
-    saveSetting(SPIFFS, settingBasePath, settingState);
-  }
-  isFirst = nextState != currentState;
-  currentState = nextState;
+    case ScreenState::Setting:
+        nextState = settingLoop(&M5Dial.Display, encoder, &M5Dial.BtnA, &settingState, isFirst);
+        break;
+
+    case ScreenState::Add:
+        if (ids.size() > 1)
+        {
+            ids.clear();
+        }
+        else
+        {
+            ids.push_back(0x1234);
+        }
+        nextState = ScreenState::Main;
+        break;
+
+    default:
+        break;
+    }
+    if (currentState == ScreenState::Setting && nextState == ScreenState::Main)
+    {
+        saveSetting(SPIFFS, settingBasePath, settingState);
+    }
+    isFirst = nextState != currentState;
+    currentState = nextState;
 }
