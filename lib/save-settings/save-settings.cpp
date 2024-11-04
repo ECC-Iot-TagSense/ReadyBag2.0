@@ -31,11 +31,12 @@ void saveSetting(fs::FS &fs, const char *basePath, SettingState state)
     char settingPath[32];
     sprintf(settingPath, "%s/%s", basePath, userPath);
     auto file = fs.open(settingPath, "w");
+    WriteBufferingStream bufferedFile{file, 64};
     ArduinoJson::JsonDocument doc;
     doc["light"] = state.light;
     doc["scan"] = state.scan;
     doc["alertTime"] = state.alert_time;
     doc["userClock"] = state.user_clock;
-    ArduinoJson::serializeJson(doc, file);
+    ArduinoJson::serializeJson(doc, bufferedFile);
     file.close();
 }
