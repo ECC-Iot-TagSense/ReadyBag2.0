@@ -5,7 +5,17 @@
 #include "reader.h"
 #include "encoder.h"
 #include <utility/Button_Class.hpp>
+#include <Adafruit_NeoPixel.h>
 
-ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<uint16_t> *registeredIds);
+ScreenState mainLoop(
+    M5GFX *display,
+    Reader *reader,
+    Encoder *encoder,
+    m5::Button_Class *button,
+    bool isScan,
+    bool isFirst,
+    bool enableLight,
+    std::vector<uint16_t> *registeredIds,
+    Adafruit_NeoPixel *pixels);
 
 #endif

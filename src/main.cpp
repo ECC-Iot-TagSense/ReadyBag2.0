@@ -7,6 +7,10 @@
 #include "main-screen.h"
 #include "reader.h"
 #include "save-settings.h"
+#include <Adafruit_NeoPixel.h>
+
+#define LED_DATA_PIN 15
+#define LED_LEN (5 * 3)
 
 using std::vector;
 
@@ -18,6 +22,7 @@ bool isFirst = true;
 SettingState settingState;
 Reader *reader;
 ScreenState currentState = ScreenState::Main;
+Adafruit_NeoPixel pixels(LED_LEN, LED_DATA_PIN);
 
 void setup()
 {
@@ -29,6 +34,8 @@ void setup()
     USBSerial.println("Start");
     settingState = readSetting(SPIFFS, settingBasePath);
     reader = new Reader(&Serial);
+    pixels.fill(pixels.Color(255, 0, 0));
+    pixels.show();
 }
 
 void loop()
@@ -39,7 +46,7 @@ void loop()
     switch (currentState)
     {
     case ScreenState::Main:
-        nextState = mainLoop(&M5Dial.Display, reader, encoder, &M5Dial.BtnA, settingState.scan, isFirst, &ids);
+        nextState = mainLoop(&M5Dial.Display, reader, encoder, &M5Dial.BtnA, settingState.scan, isFirst, settingState.light, &ids, &pixels);
         break;
 
     case ScreenState::Setting:
