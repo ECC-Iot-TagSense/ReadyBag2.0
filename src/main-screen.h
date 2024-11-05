@@ -6,6 +6,6 @@
 #include "encoder.h"
 #include <utility/Button_Class.hpp>
 
-ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<uint16_t> *registeredIds);
+ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<TagID> *registeredIds);
 
 #endif

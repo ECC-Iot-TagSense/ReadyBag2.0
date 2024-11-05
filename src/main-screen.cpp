@@ -1,6 +1,7 @@
 #include "main-screen.h"
 #include "screen.h"
 #include "index.h"
+#include "reader.h"
 
 namespace main_screen
 {
@@ -10,7 +11,7 @@ namespace main_screen
     MainState previousState = MainState::NotScan;
 }
 
-ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<uint16_t> *registeredIds)
+ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<TagID> *registeredIds)
 {
     using namespace main_screen;
 
