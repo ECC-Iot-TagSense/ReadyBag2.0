@@ -11,7 +11,16 @@ namespace main_screen
     MainState previousState = MainState::NotScan;
 }
 
-ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Button_Class *button, bool isScan, bool isFirst, std::vector<TagID> *registeredIds)
+ScreenState mainLoop(
+    M5GFX *display,
+    Reader *reader,
+    Encoder *encoder,
+    m5::Button_Class *button,
+    bool isScan,
+    bool isFirst,
+    bool enableLight,
+    std::vector<TagID> *registeredIds,
+    Adafruit_NeoPixel *pixels)
 {
     using namespace main_screen;
 
@@ -39,6 +48,16 @@ ScreenState mainLoop(M5GFX *display, Reader *reader, Encoder *encoder, m5::Butto
                 break;
             }
         }
+    }
+    if (state == MainState::Alert && enableLight)
+    {
+        pixels->fill(pixels->Color(255, 0, 0));
+        pixels->show();
+    }
+    else
+    {
+        pixels->clear();
+        pixels->show();
     }
 
     if (button->wasPressed())
