@@ -8,13 +8,8 @@
 
 using std::vector;
 
-enum class AddsState
-{
-    Select,
-    Wait,
-    Done,
-};
-
-void drawAddScreen(fs::FS &fs, M5GFX *display, AddsState state, vector<String> *category, int selectionIndex);
+void drawAddSelectorScreen(fs::FS &fs, M5GFX *display, vector<String> *category, int selectionIndex);
+void drawAddWaitScreen(fs::FS &fs, M5GFX *display);
+void drawAddCompleteScreen(fs::FS &fs, M5GFX *display);
 
 #endif
