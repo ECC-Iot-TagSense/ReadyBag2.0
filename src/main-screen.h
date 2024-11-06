@@ -16,5 +16,5 @@ ScreenState mainLoop(
     bool isFirst,
     bool enableLight,
     std::vector<TagID> *registeredIds,
-    Adafruit_NeoPixel *pixels)
+    Adafruit_NeoPixel *pixels);
 #endif
