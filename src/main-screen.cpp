@@ -1,6 +1,7 @@
 #include "main-screen.h"
 #include "screen.h"
 #include "index.h"
+#include "reader.h"
 
 namespace main_screen
 {
@@ -18,7 +19,7 @@ ScreenState mainLoop(
     bool isScan,
     bool isFirst,
     bool enableLight,
-    std::vector<uint16_t> *registeredIds,
+    std::vector<TagID> *registeredIds,
     Adafruit_NeoPixel *pixels)
 {
     using namespace main_screen;
