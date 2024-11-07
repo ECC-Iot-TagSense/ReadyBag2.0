@@ -8,8 +8,20 @@
 
 using std::vector;
 
+enum class AddMessage
+{
+    Scanning,
+    Complete,
+};
+
+enum class AddError
+{
+    NotFound,
+    DoubleDetected,
+};
+
 void drawAddSelectorScreen(fs::FS &fs, M5GFX *display, vector<String> *category, int selectionIndex);
-void drawAddWaitScreen(fs::FS &fs, M5GFX *display);
-void drawAddCompleteScreen(fs::FS &fs, M5GFX *display);
+void drawAddMessageScreen(fs::FS &fs, M5GFX *display, AddMessage message);
+void drawAddErrorScreen(fs::FS &fs, M5GFX *display, AddError message);
 
 #endif
