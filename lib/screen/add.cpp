@@ -56,13 +56,50 @@ void drawAddSelectorScreen(fs::FS &fs, M5GFX *display, vector<String> *category,
     display->endWrite();
 }
 
-void drawAddWaitScreen(fs::FS &fs, M5GFX *display)
+void drawAddMessageScreen(fs::FS &fs, M5GFX *display, AddMessage message)
 {
     M5Canvas canvas(display);
     canvas.createSprite(display->width(), display->height());
     canvas.fillSprite(BACKGROUND_COLOR);
     betterDrawPngFile(&canvas, fs, "/status-set.png", initCoordinate(0, 0), datum_t::top_center);
     betterDrawPngFile(&canvas, fs, "/add-state.png", initCoordinate(0, 22), datum_t::top_center);
+
+    switch (message)
+    {
+    case AddMessage::Scanning:
+        betterDrawPngFile(&canvas, fs, "/add-scan.png", initCoordinate(0, 120), datum_t::top_center);
+        break;
+
+    case AddMessage::Complete:
+        betterDrawPngFile(&canvas, fs, "/add-complete.png", initCoordinate(0, 120), datum_t::top_center);
+
+    default:
+        break;
+    }
+
+    display->startWrite();
+    canvas.pushSprite(0, 0);
+    display->endWrite();
+}
+
+void drawAddErrorScreen(fs::FS &fs, M5GFX *display, AddError message)
+{
+    M5Canvas canvas(display);
+    canvas.createSprite(display->width(), display->height());
+    canvas.fillSprite(BACKGROUND_COLOR);
+    betterDrawPngFile(&canvas, fs, "/status-set.png", initCoordinate(0, 0), datum_t::top_center);
+    betterDrawPngFile(&canvas, fs, "/add-state.png", initCoordinate(0, 22), datum_t::top_center);
+
+    betterDrawPngFile(&canvas, fs, "/add-error.png", initCoordinate(0, 91), datum_t::top_center);
+    switch (message)
+    {
+    case AddError::NotFound:
+        betterDrawPngFile(&canvas, fs, "/add-E-not-found.png", initCoordinate(0, 120), datum_t::top_center);
+        break;
+    case AddError::DoubleDetected:
+        betterDrawPngFile(&canvas, fs, "/add-E-double.png", initCoordinate(0, 120), datum_t::top_center);
+        break;
+    }
 
     display->startWrite();
     canvas.pushSprite(0, 0);
