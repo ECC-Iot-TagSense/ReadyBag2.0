@@ -38,26 +38,25 @@ void Reader::stop()
 std::vector<TagID> Reader::read()
 { // 最新のデータを読み取る
     std::vector<TagID> retTagIds(this->tagIds.size());
-    portENTER_CRITICAL_ISR(&this->idsMux);
     std::copy(this->tagIds.begin(), this->tagIds.end(), retTagIds.begin());
-    portEXIT_CRITICAL_ISR(&this->idsMux);
     return retTagIds;
 }
 
 void Reader::update()
 {
-    bool isBreak = false;
+    bool isEnd = false;
     bool isEsc = false;
     if (!this->serial->available())
     {
         return;
     }
     uint8_t *readData = new uint8_t[128];
-    auto read = this->serial->readBytes(readData, 128);
+    // auto read = this->serial->readBytesUntil(readData, 128);
 
-    for (int i = 0; i < read; i++)
+    // for (int i = 0; i < read; i++)
+    while (this->serial->available())
     {
-        auto data = readData[i];
+        auto data = this->serial->read();
         if (data == SLIP_ESC)
         {
             isEsc = true;
@@ -77,7 +76,7 @@ void Reader::update()
         }
         if (data == SLIP_END)
         {
-            isBreak = true;
+            isEnd = true;
             this->bufSize = 0;
             break;
         }
@@ -91,28 +90,26 @@ void Reader::update()
             TagID tagId = std::make_tuple(id1, id2);
             Serial.print(id1, HEX);
             Serial.println(id2, HEX);
-            portENTER_CRITICAL_ISR(&this->readMux);
             if (std::count(this->readTagIds.begin(), this->readTagIds.end(), tagId) == 0)
             {
                 this->readTagIds.push_back(tagId);
             }
-            portEXIT_CRITICAL_ISR(&this->readMux);
             this->bufSize = 0;
         }
+        USBSerial.print(">bufSize:");
+        USBSerial.println(this->bufSize);
+        USBSerial.print(">data:");
+        USBSerial.println(data, HEX);
     }
-    if (!isBreak)
+    if (!isEnd)
     {
         return;
     }
 
-    portENTER_CRITICAL_ISR(&this->idsMux);
     this->tagIds.clear();
-    portENTER_CRITICAL_ISR(&this->readMux);
     for (auto tagId : this->readTagIds)
     {
         this->tagIds.push_back(tagId);
     }
-    portEXIT_CRITICAL_ISR(&this->idsMux);
     this->readTagIds.clear();
-    portEXIT_CRITICAL_ISR(&this->readMux);
 }
