@@ -1,8 +1,25 @@
 #include "reader.h"
 
+#define SLIP_END 0xC0
+#define SLIP_ESC 0xDB
+#define SLIP_ESC_END 0xDC
+#define SLIP_ESC_ESC 0xDD
+
+void UpdateTask(void *arg)
+{
+    Reader *reader = (Reader *)arg;
+    while (true)
+    {
+        reader->update();
+        delayMicroseconds(1);
+    }
+}
+
 Reader::Reader(HardwareSerial *serial)
 {
     this->serial = serial;
+    this->buf = new uint8_t[12];
+    this->bufSize = 0;
 }
 
 Reader::~Reader()
@@ -11,64 +28,88 @@ Reader::~Reader()
 
 void Reader::start()
 {
-    this->serial->write("start\n");
+    xTaskCreatePinnedToCore(UpdateTask, "UpdateTask", 4096, this, 1, NULL, 1);
 }
 
 void Reader::stop()
 {
-    this->serial->write("stop\n");
 }
 
 std::vector<TagID> Reader::read()
+{ // 最新のデータを読み取る
+    std::vector<TagID> retTagIds(this->tagIds.size());
+    std::copy(this->tagIds.begin(), this->tagIds.end(), retTagIds.begin());
+    return retTagIds;
+}
+
+void Reader::update()
 {
-    this->tagIds.clear();
-    this->tagId = TagID();
+    bool isEnd = false;
+    bool isEsc = false;
+    if (!this->serial->available())
+    {
+        return;
+    }
+    uint8_t *readData = new uint8_t[128];
+    // auto read = this->serial->readBytesUntil(readData, 128);
+
+    // for (int i = 0; i < read; i++)
     while (this->serial->available())
     {
-        uint8_t receivedData[12];
-        int index = 0;
-
-        // 12バイトを受信するループ
-        while (index < 12 && this->serial->available())
+        auto data = this->serial->read();
+        if (data == SLIP_ESC)
         {
-            receivedData[index++] = this->serial->read();
+            isEsc = true;
+            continue;
         }
-
-        // 改行文字が来るまで読み続ける
-        if (this->serial->available() && this->serial->read() == '\n') {
-            for(int i = 0; i < 12; i++) {
-                USBSerial.print(receivedData[i], HEX);
-                USBSerial.print(" ");
-            }
-            USBSerial.println();
-            // 12バイトのデータをタプルに変換
-            std::get<0>(this->tagId) = receivedData[0];
-            std::get<1>(this->tagId) = receivedData[1];
-            std::get<2>(this->tagId) = receivedData[2];
-            std::get<3>(this->tagId) = receivedData[3];
-            std::get<4>(this->tagId) = receivedData[4];
-            std::get<5>(this->tagId) = receivedData[5];
-            std::get<6>(this->tagId) = receivedData[6];
-            std::get<7>(this->tagId) = receivedData[7];
-            std::get<8>(this->tagId) = receivedData[8];
-            std::get<9>(this->tagId) = receivedData[9];
-            std::get<10>(this->tagId) = receivedData[10];
-            std::get<11>(this->tagId) = receivedData[11];
-            bool isDuplicate = false;
-            for (auto tagid : this->tagIds)
+        if (isEsc)
+        {
+            isEsc = false;
+            if (data == SLIP_ESC_END)
             {
-                if (tagid == this->tagId)
-                {
-                    isDuplicate = true;
-                    break;
-                }
+                data = SLIP_END;
             }
-
-            if (!isDuplicate)
+            else if (data == SLIP_ESC_ESC)
             {
-                tagIds.push_back(tagId);
+                data = SLIP_ESC;
             }
         }
+        if (data == SLIP_END)
+        {
+            isEnd = true;
+            this->bufSize = 0;
+            break;
+        }
+        this->buf[this->bufSize++] = data;
+        if (this->bufSize >= 12)
+        {
+            uint64_t id1;
+            uint32_t id2;
+            memcpy(&id1, this->buf, sizeof(uint64_t));
+            memcpy(&id2, this->buf + sizeof(uint64_t), sizeof(uint32_t));
+            TagID tagId = std::make_tuple(id1, id2);
+            Serial.print(id1, HEX);
+            Serial.println(id2, HEX);
+            if (std::count(this->readTagIds.begin(), this->readTagIds.end(), tagId) == 0)
+            {
+                this->readTagIds.push_back(tagId);
+            }
+            this->bufSize = 0;
+        }
+        USBSerial.print(">bufSize:");
+        USBSerial.println(this->bufSize);
+        USBSerial.print(">data:");
+        USBSerial.println(data, HEX);
     }
-    return tagIds;
+    if (!isEnd)
+    {
+        return;
+    }
+
+    this->tagIds.clear();
+    for (auto tagId : this->readTagIds)
+    {
+        this->tagIds.push_back(tagId);
+    }
+    this->readTagIds.clear();
 }
