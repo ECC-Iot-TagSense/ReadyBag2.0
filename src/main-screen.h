@@ -1,6 +1,7 @@
 #ifndef __main_screen_h__
 #define __main_screen_h__
 #include "screen-state.h"
+#include <SPIFFS.h>
 #include <M5GFX.h>
 #include "reader.h"
 #include "encoder.h"

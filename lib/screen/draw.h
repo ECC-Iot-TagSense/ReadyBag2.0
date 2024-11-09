@@ -1,6 +1,7 @@
 #ifndef __DRAW_H__
 #define __DRAW_H__
 #include <FS.h>
+#include <SPIFFS.h>
 #include <M5GFX.h>
 
 struct Coordinate_t
