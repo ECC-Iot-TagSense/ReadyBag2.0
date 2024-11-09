@@ -2,6 +2,7 @@
 #define __setting_screen_h__
 
 #include "screen-state.h"           // スクリーン状態を定義するヘッダーファイル
+#include <SPIFFS.h>                 // SPIFFS用のライブラリ
 #include <M5GFX.h>                  // M5Stack用のグラフィックスライブラリ
 #include "encoder.h"                // エンコーダー操作を持つクラスのヘッダーファイル
 #include <utility/Button_Class.hpp> // ボタン操作のためのクラス

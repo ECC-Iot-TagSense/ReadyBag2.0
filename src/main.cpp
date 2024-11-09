@@ -7,6 +7,7 @@
 #include "main-screen.h"
 #include "reader.h"
 #include "save-settings.h"
+#include "settimer.h"
 #include <Adafruit_NeoPixel.h>
 
 #define LED_DATA_PIN 15
