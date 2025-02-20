@@ -33,13 +33,17 @@ void drawMainScreen(fs::FS &fs, M5GFX *display, MainState state, MainSelection s
     switch (selection)
     {
     case MainSelection::Bell:
+        USBSerial.println("MainSelection::Bell");
         betterDrawPngFile(&canvas, fs, "/bell-sel.png", bellCoordinate, datum_t::top_center);
         betterDrawPngFile(&canvas, fs, "/active-effect-up.png", initCoordinate(0, 11), datum_t::top_center);
         break;
     case MainSelection::Add:
+        USBSerial.println("MainSelection::Add");
         betterDrawPngFile(&canvas, fs, "/active-effect-L-white.png", initCoordinate(20, 78), datum_t::top_left);
         break;
     case MainSelection::Setting:
+
+        USBSerial.println("MainSelection::Setting");
         betterDrawPngFile(&canvas, fs, "/active-effect-R-white.png", initCoordinate(-16, 76), datum_t::top_right);
         break;
     }

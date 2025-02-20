@@ -2,6 +2,7 @@
 #include "screen.h"
 #include "index.h"
 #include "reader.h"
+#include "LineNotify.h"
 
 namespace main_screen
 {
@@ -53,6 +54,9 @@ ScreenState mainLoop(
     {
         pixels->fill(pixels->Color(255, 0, 0));
         pixels->show();
+
+        // /////LINE通知処理//////
+        // line_notify();
     }
     else
     {

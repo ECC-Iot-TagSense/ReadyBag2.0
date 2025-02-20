@@ -4,6 +4,7 @@
 #include <M5GFX.h>
 #include "reader.h"
 #include "encoder.h"
+#include "LineNotify.h"
 #include <utility/Button_Class.hpp>
 #include <Adafruit_NeoPixel.h>
 

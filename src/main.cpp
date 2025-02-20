@@ -7,6 +7,7 @@
 #include "main-screen.h"
 #include "reader.h"
 #include "save-settings.h"
+#include "connection.h"
 #include <Adafruit_NeoPixel.h>
 
 #define LED_DATA_PIN 15
@@ -23,9 +24,11 @@ SettingState settingState;
 Reader *reader;
 ScreenState currentState = ScreenState::Main;
 Adafruit_NeoPixel pixels(LED_LEN, LED_DATA_PIN);
+M5Canvas canvas(&M5Dial.Display);
 
 void setup()
 {
+    WiFiConnect(); // WiFi接続処理
     USBSerial.begin(115200);
     Serial2.begin(115200, SERIAL_8N1, 2, 1);
     M5Dial.begin(true);
@@ -41,6 +44,7 @@ void setup()
 void loop()
 {
     M5Dial.update();
+    return;
     encoder->update();
     auto nextState = currentState;
     switch (currentState)
