@@ -67,16 +67,6 @@ void loop()
             TagID tagId;
             std::get<0>(tagId) = 0x00;
             std::get<1>(tagId) = 0x11;
-            std::get<2>(tagId) = 0x22;
-            std::get<3>(tagId) = 0x33;
-            std::get<4>(tagId) = 0x44;
-            std::get<5>(tagId) = 0x55;
-            std::get<6>(tagId) = 0x66;
-            std::get<7>(tagId) = 0x77;
-            std::get<8>(tagId) = 0x88;
-            std::get<9>(tagId) = 0x99;
-            std::get<10>(tagId) = 0xAA;
-            std::get<11>(tagId) = 0xBB;
             ids.push_back(tagId);
             USBSerial.println("Tag Added");
         }
