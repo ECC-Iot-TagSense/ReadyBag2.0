@@ -11,6 +11,8 @@
 #include <Adafruit_NeoPixel.h>
 #include "WiFi.h"
 #include "http-sender.hpp"
+#include "add-screen.hpp"
+#include <map>
 
 #define LED_DATA_PIN 15
 #define LED_LEN (5 * 3)
@@ -27,6 +29,9 @@ Reader *reader;
 ScreenState currentState = ScreenState::Main;
 Adafruit_NeoPixel pixels(LED_LEN, LED_DATA_PIN);
 HttpSender *sender;
+vector<String> categories;
+std::map<TagID, uint8_t> tags;
+
 
 void setup()
 {
@@ -41,6 +46,17 @@ void setup()
     sender = new HttpSender(&WiFi, "maruyama", "marufuck", "192.168.217.50", (uint16_t)8000);
     pixels.fill(pixels.Color(255, 0, 0));
     pixels.show();
+    reader->start();
+    auto cat = {
+        "サイフ",
+        "名刺",
+        "パスポート",
+        "充電器",
+        "常備薬"};
+    for (const auto &c : cat)
+    {
+        categories.push_back(c);
+    }
 }
 
 void loop()
