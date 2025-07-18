@@ -83,10 +83,11 @@ void Reader::update()
         this->buf[this->bufSize++] = data;
         if (this->bufSize >= 12)
         {
+            // USBSerial.println("Buffer full, processing tag ID");
             uint64_t id1;
             uint32_t id2;
-            memcpy(&id1, this->buf, sizeof(uint64_t));
-            memcpy(&id2, this->buf + sizeof(uint64_t), sizeof(uint32_t));
+            memcpy(&id2, this->buf, sizeof(uint32_t));
+            memcpy(&id1, this->buf + sizeof(uint32_t), sizeof(uint64_t));
             TagID tagId = std::make_tuple(id1, id2);
             Serial.print(id1, HEX);
             Serial.println(id2, HEX);
@@ -96,10 +97,10 @@ void Reader::update()
             }
             this->bufSize = 0;
         }
-        USBSerial.print(">bufSize:");
-        USBSerial.println(this->bufSize);
-        USBSerial.print(">data:");
-        USBSerial.println(data, HEX);
+        // USBSerial.print(">bufSize:");
+        // USBSerial.println(this->bufSize);
+        // USBSerial.print(">data:");
+        // USBSerial.println(data, HEX);
     }
     if (!isEnd)
     {
