@@ -11,7 +11,7 @@ void UpdateTask(void *arg)
     while (true)
     {
         reader->update();
-        delayMicroseconds(1);
+        delay(1);
     }
 }
 
