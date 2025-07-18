@@ -50,12 +50,12 @@ void Reader::update()
     {
         return;
     }
-    uint8_t *readData = new uint8_t[128];
     // auto read = this->serial->readBytesUntil(readData, 128);
 
     // for (int i = 0; i < read; i++)
     while (this->serial->available())
     {
+
         auto data = this->serial->read();
         if (data == SLIP_ESC)
         {
@@ -79,6 +79,11 @@ void Reader::update()
             isEnd = true;
             this->bufSize = 0;
             break;
+        }
+        if (this->bufSize >= 12)
+        {
+            USBSerial.println("Buffer overflow, resetting buffer");
+            this->bufSize = 0; // Reset buffer if overflow
         }
         this->buf[this->bufSize++] = data;
         if (this->bufSize >= 12)

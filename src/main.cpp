@@ -13,6 +13,7 @@
 #include "http-sender.hpp"
 #include "add-screen.hpp"
 #include <map>
+#include <tags.hpp>
 
 #define LED_DATA_PIN 15
 #define LED_LEN (5 * 3)
@@ -20,6 +21,11 @@
 using std::vector;
 
 const char *settingBasePath = "/settings";
+
+#define SSID "maruyama"
+#define PASSWORD "marufuck"
+#define HOST "192.168.217.50"
+#define PORT (8000)
 
 Encoder *encoder;
 std::vector<TagID> ids;
@@ -31,7 +37,7 @@ Adafruit_NeoPixel pixels(LED_LEN, LED_DATA_PIN);
 HttpSender *sender;
 vector<String> categories;
 std::map<TagID, uint8_t> tags;
-
+std::vector<uint8_t> existIds;
 
 void setup()
 {
@@ -43,7 +49,8 @@ void setup()
     USBSerial.println("Start");
     settingState = readSetting(SPIFFS, settingBasePath);
     reader = new Reader(&Serial2);
-    sender = new HttpSender(&WiFi, "maruyama", "marufuck", "192.168.217.50", (uint16_t)8000);
+    sender = new HttpSender(&WiFi, SSID, PASSWORD, HOST, PORT);
+    tags = readTags(SPIFFS);
     pixels.fill(pixels.Color(255, 0, 0));
     pixels.show();
     reader->start();
@@ -57,17 +64,32 @@ void setup()
     {
         categories.push_back(c);
     }
+    sender->send(existIds); // 初期化時に空のデータを送信
 }
 
 void loop()
 {
     M5Dial.update();
     encoder->update();
+    USBSerial.println(">loop:0");
+    USBSerial.printf(">diff: %d\n", encoder->difference());
     auto nextState = currentState;
     switch (currentState)
     {
     case ScreenState::Main:
-        nextState = mainLoop(&M5Dial.Display, reader, encoder, &M5Dial.BtnA, settingState.scan, isFirst, settingState.light, &ids, &pixels);
+        nextState = mainLoop(
+            &M5Dial.Display,
+            reader,
+            encoder,
+            &M5Dial.BtnA,
+            settingState.scan,
+            isFirst,
+            settingState.light,
+            tags,
+            sender,
+            &existIds,
+            &pixels);
+
         break;
 
     case ScreenState::Setting:
@@ -75,22 +97,15 @@ void loop()
         break;
 
     case ScreenState::Add:
-        if (ids.size() > 0)
-        {
-            reader->stop();
-            ids.clear();
-            USBSerial.println("Tag Cleared");
-        }
-        else
-        {
-            reader->start();
-            TagID tagId;
-            std::get<0>(tagId) = 0x00;
-            std::get<1>(tagId) = 0x11;
-            ids.push_back(tagId);
-            USBSerial.println("Tag Added");
-        }
-        nextState = ScreenState::Main;
+        nextState = addLoop(
+            SPIFFS,
+            &M5Dial.Display,
+            reader,
+            encoder,
+            &M5Dial.BtnA,
+            isFirst,
+            &tags,
+            &categories);
         break;
 
     default:
@@ -102,4 +117,5 @@ void loop()
     }
     isFirst = nextState != currentState;
     currentState = nextState;
+    delay(10);
 }
