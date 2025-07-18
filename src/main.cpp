@@ -9,6 +9,8 @@
 #include "save-settings.h"
 #include "settimer.h"
 #include <Adafruit_NeoPixel.h>
+#include "WiFi.h"
+#include "http-sender.hpp"
 
 #define LED_DATA_PIN 15
 #define LED_LEN (5 * 3)
@@ -24,6 +26,7 @@ SettingState settingState;
 Reader *reader;
 ScreenState currentState = ScreenState::Main;
 Adafruit_NeoPixel pixels(LED_LEN, LED_DATA_PIN);
+HttpSender *sender;
 
 void setup()
 {
@@ -35,6 +38,7 @@ void setup()
     USBSerial.println("Start");
     settingState = readSetting(SPIFFS, settingBasePath);
     reader = new Reader(&Serial2);
+    sender = new HttpSender(&WiFi, "maruyama", "marufuck", "192.168.217.50", (uint16_t)8000);
     pixels.fill(pixels.Color(255, 0, 0));
     pixels.show();
 }
