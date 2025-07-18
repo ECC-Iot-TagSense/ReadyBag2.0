@@ -2,5 +2,4 @@
     "editor.formatOnSave": true,
     "editor.detectIndentation": false,
     "editor.tabSize": 4,
-    "C_Cpp.errorSquiggles": "disabled"
 }
