@@ -9,6 +9,8 @@
 #include "save-settings.h"
 #include "settimer.h"
 #include <Adafruit_NeoPixel.h>
+#include "add-screen.hpp"
+#include <map>
 
 #define LED_DATA_PIN 15
 #define LED_LEN (5 * 3)
@@ -24,6 +26,8 @@ SettingState settingState;
 Reader *reader;
 ScreenState currentState = ScreenState::Main;
 Adafruit_NeoPixel pixels(LED_LEN, LED_DATA_PIN);
+vector<String> categories;
+std::map<TagID, uint8_t> tags;
 
 void setup()
 {
@@ -37,6 +41,17 @@ void setup()
     reader = new Reader(&Serial2);
     pixels.fill(pixels.Color(255, 0, 0));
     pixels.show();
+    reader->start();
+    auto cat = {
+        "サイフ",
+        "名刺",
+        "パスポート",
+        "充電器",
+        "常備薬"};
+    for (const auto &c : cat)
+    {
+        categories.push_back(c);
+    }
 }
 
 void loop()
