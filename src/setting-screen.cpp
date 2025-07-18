@@ -18,6 +18,7 @@ ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *butt
 
     if (wasPressed)
     {
+        USBSerial.println("Button was pressed");
         auto currentSelection = selections[selectionIndex];
         switch (currentSelection)
         {
@@ -54,6 +55,7 @@ ScreenState settingLoop(M5GFX *display, Encoder *encoder, m5::Button_Class *butt
     {
         selectionIndex = 0;
     }
+    USBSerial.println("update screen");
     drawSettingScreen(SPIFFS, display, *setistate, selections[selectionIndex]); // 画面描画
     return nextScreenState;                                                     // 次の画面を返す
 }

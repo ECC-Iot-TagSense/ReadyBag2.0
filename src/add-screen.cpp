@@ -23,7 +23,9 @@ namespace add_screen
 bool waiting(int &waitCount, int seconds)
 {
     waitCount++;
-    if (waitCount > seconds * 1000) // seconds待つ
+    USBSerial.print(">waitCount:");
+    USBSerial.println(waitCount);
+    if (waitCount > seconds * 100) // seconds待つ
     {
         return true;
     }
@@ -45,7 +47,7 @@ AddState selectCategory(
         return AddState::SELECT_CATEGORY;
     }
 
-    if (button->wasClicked())
+    if (button->wasPressed())
     {
         return AddState::SCANNING;
     }
@@ -75,14 +77,16 @@ AddState scanning(
     int selectionIndex,
     std::map<TagID, uint8_t> *tags)
 {
+    USBSerial.print(">scanIsFirst:");
+    USBSerial.println(isFirst);
     if (isFirst)
     {
         drawAddMessageScreen(fs, display, AddMessage::Scanning);
         waitCount = 0;
         return AddState::SCANNING;
     }
-    auto readTags = reader->read();
-    if (readTags.empty())
+    auto readedTags = reader->read();
+    if (readedTags.empty())
     {
         auto ret = AddState::SCANNING;
         if (waiting(waitCount, 5)) // 5秒待つ
@@ -91,12 +95,19 @@ AddState scanning(
         }
         return ret;
     }
-    if (readTags.size() > 1)
+    if (readedTags.size() > 1)
     {
         return AddState::ERROR_DUBBING;
     }
-    (*tags)[readTags[0]] = (uint8_t)selectionIndex;
+    (*tags)[readedTags[0]] = (uint8_t)selectionIndex;
     writeTags(fs, *tags);
+    auto a = readTags(fs);
+    for (auto &tag : a)
+    {
+        USBSerial.printf("TagID: %016llx%08lx", std::get<0>(tag.first), std::get<1>(tag.first));
+        USBSerial.printf(" Category: %d\n", tag.second);
+    }
+
     return AddState::COMPLETE;
 }
 
@@ -114,12 +125,15 @@ AddState message(
         {
         case AddState::COMPLETE:
             drawAddMessageScreen(fs, display, AddMessage::Complete);
+            USBSerial.println("Add complete");
             break;
         case AddState::ERROR_DUBBING:
             drawAddErrorScreen(fs, display, AddError::DoubleDetected);
+            USBSerial.println("Add error: double detected");
             break;
         case AddState::ERROR_NOT_FOUND:
             drawAddErrorScreen(fs, display, AddError::NotFound);
+            USBSerial.println("Add error: not found");
             break;
         default:
             return AddState::MAIN; // おかしいからmainに戻す

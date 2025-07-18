@@ -22,13 +22,20 @@ HttpSender::~HttpSender()
 
 void HttpSender::send(std::vector<uint8_t> &data)
 {
-    ArduinoJson::JsonDocument doc;
-    for (size_t i = 0; i < data.size(); ++i)
-    {
-        doc[i] = data[i];
-    }
     String json;
-    serializeJson(doc, json);
+    if (!data.empty())
+    {
+        ArduinoJson::JsonDocument doc;
+        for (size_t i = 0; i < data.size(); ++i)
+        {
+            doc[i] = data[i];
+        }
+        serializeJson(doc, json);
+    }
+    else
+    {
+        json = "[]"; // Empty array if no data
+    }
     this->client->begin(this->host, this->port, "/");
     this->client->addHeader("Content-Type", "application/json");
     this->client->addHeader("Content-Length", String(json.length()));

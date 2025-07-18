@@ -24,6 +24,12 @@ std::map<TagID, uint8_t> readTags(fs::FS &fs)
 
 void writeTags(fs::FS &fs, std::map<TagID, uint8_t> &tags)
 {
+    USBSerial.println(fs.exists(TAGS_FILE) ? "File exists" : "File does not exist");
+    if (fs.exists(TAGS_FILE))
+    {
+        USBSerial.println("Removing existing tags file");
+        fs.remove(TAGS_FILE); // 既存のファイルを削除
+    }
     auto tags_file = fs.open(TAGS_FILE, FILE_WRITE, true);
     for (const auto &tag : tags)
     {
@@ -34,4 +40,5 @@ void writeTags(fs::FS &fs, std::map<TagID, uint8_t> &tags)
         tags_file.write((const uint8_t *)&tag_id_low, sizeof(tag_id_low));
         tags_file.write(value);
     }
+    tags_file.close();
 }

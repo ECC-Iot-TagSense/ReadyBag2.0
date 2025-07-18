@@ -19,7 +19,9 @@ ScreenState mainLoop(
     bool isScan,
     bool isFirst,
     bool enableLight,
-    std::vector<TagID> *registeredIds,
+    std::map<TagID, uint8_t> &tags,
+    HttpSender *sender,
+    std::vector<uint8_t> *existIds,
     Adafruit_NeoPixel *pixels)
 {
     using namespace main_screen;
@@ -29,14 +31,16 @@ ScreenState mainLoop(
     if (isScan)
     {
         state = MainState::Nomal;
-        auto existIds = reader->read();
-        for (auto registeredId : *registeredIds)
+        auto currentExistTags = reader->read();
+        auto currentExistIds = vector<uint8_t>();
+        for (auto &tag : tags)
         {
             bool isExist = false;
-            for (auto existId : existIds)
+            for (auto existId : currentExistTags)
             {
-                if (registeredId == existId)
+                if (tag.first == existId)
                 {
+                    currentExistIds.push_back(tag.second);
                     isExist = true;
                     break;
                 }
@@ -45,8 +49,30 @@ ScreenState mainLoop(
             if (!isExist)
             {
                 state = MainState::Alert;
-                break;
             }
+        }
+        auto isSameExistIds = false;
+        if (currentExistIds.size() == existIds->size())
+        {
+            isSameExistIds = true;
+            for (auto i = 0; i < currentExistIds.size(); i++)
+            {
+                if (currentExistIds[i] != existIds->at(i))
+                {
+                    isSameExistIds = false;
+                    break;
+                }
+            }
+        }
+        if (!isSameExistIds)
+        {
+            USBSerial.println("Exist IDs changed, updating...");
+            existIds->clear();
+            for (auto &id : currentExistIds)
+            {
+                existIds->push_back(id);
+            }
+            sender->send(*existIds);
         }
     }
     if (state == MainState::Alert && enableLight)

@@ -7,6 +7,8 @@
 #include "encoder.h"
 #include <utility/Button_Class.hpp>
 #include <Adafruit_NeoPixel.h>
+#include <http-sender.hpp>
+#include <map>
 
 ScreenState mainLoop(
     M5GFX *display,
@@ -16,6 +18,8 @@ ScreenState mainLoop(
     bool isScan,
     bool isFirst,
     bool enableLight,
-    std::vector<TagID> *registeredIds,
+    std::map<TagID, uint8_t> &tags,
+    HttpSender *sender,
+    std::vector<uint8_t> *existIds,
     Adafruit_NeoPixel *pixels);
 #endif
