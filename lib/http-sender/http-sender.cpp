@@ -1,5 +1,5 @@
 #include "http-sender.hpp"
-#include <ArduinoJSON.h>
+#include <ArduinoJson.h>
 
 HttpSender::HttpSender(WiFiClass *wifi, const char *ssid, const char *password, String host, uint16_t port)
 {
